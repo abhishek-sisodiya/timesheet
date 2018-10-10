@@ -1,0 +1,98 @@
+<div>
+<div>
+  <table>
+    <tr>
+      <td>
+        TimeSheet : 
+      </td>
+      <td>
+        Location : <select>
+          <option>Indore</option>
+          <option>Bangalore</option>
+          <option>Other</option>
+          <option>Pune</option>
+          <option>USA</option>
+        </select>
+      </td>
+      <td>
+        IRA :
+      </td>
+    </tr>
+  </table>
+  <button style="float:right;" (click)='addNewTask()'>Add New Task</button>
+</div>
+<br><br><br>
+<div>
+  <div *ngFor="let container of containers; let i=index">
+    <table *ngIf=" container == true ">
+      <tbody>
+        <tr>
+          <th style="align-content: left;">Project</th>
+          <!-- <th style="align-content: left;">Project</th> -->
+          <th style="align-content: left;">Module</th>
+          <th style="align-content: left;">Object</th>
+          <th style="align-content: left;">Activity</th>
+          <th style="align-content: left;">JIRA Number</th>
+          <th style="align-content: left;">Comments</th>
+          <th style="align-content: left;">Hrs Worked</th>
+        </tr>
+
+        <tr>
+          <td>
+            <select (change)="projectClick($event)">
+              <option *ngFor="let project of projects; let i = index" [value]="project.name" [selected]="i == 0">
+                {{project.name}}
+              </option>
+            </select>
+          </td>
+          <td>
+            <select (change)="moduleClick($event)">
+              <option *ngFor="let module of modules; let i = index" [value]="module.name" [selected]="i == 0">
+                {{module.name}}
+              </option>
+            </select>
+          </td>
+          <td>
+            <select>
+              <option *ngFor="let object of objects; let i = index" [value]="object.name" [selected]="i == 0">
+                {{object.name}}
+              </option>
+            </select>
+          </td>
+          <td>
+            <select>
+              <option *ngFor="let activity of activitys; let i = index" [value]="activity.name" [selected]="i == 0">
+                {{activity.name}}
+              </option>
+            </select>
+          </td>
+          <td>
+            <input *ngIf="IsJiraOn == false" type="text" disabled>
+            <input *ngIf="IsJiraOn == true" type="text">
+          </td>
+          <td>
+            <textarea></textarea>
+          </td>
+          <td>
+            <input (input)="hoursClick($event)" type="text">
+          </td>
+          <td>
+            <button (click)="closeTask(i)">CancelTask</button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+  </div>
+
+
+  <!-- hrs Worked -->
+  Total Hrs: {{TotalHours}}
+
+  <!-- Save -->
+  <button (click)="saveClick()">Save</button>
+  <button>Submit</button>
+  <button (click)="cancelClick()">Cancel</button>
+
+</div>
+</div>
