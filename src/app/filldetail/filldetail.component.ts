@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { totalmem } from 'os';
-import { empty } from 'rxjs';
 import { _localeFactory } from '@angular/core/src/application_module';
+import { MatSnackBar } from '@angular/material';
+import { ifError } from 'assert';
+import { del } from 'selenium-webdriver/http';
 
 @Component({
   selector: 'app-filldetail',
@@ -10,23 +11,46 @@ import { _localeFactory } from '@angular/core/src/application_module';
 })
 export class FilldetailComponent implements OnInit {
 
-  constructor() { }
+  constructor(public snackBar: MatSnackBar) { }
 
   ngOnInit() {
-    this.containers.push(true);
+    this.containers[this.ControlIndex] = true;
+    this.IsJiraOn[this.ControlIndex] = true;
+
+    this.locations = [
+      { name: "Bangalore" },
+      { name: "Indore" },
+      { name: "Other" },
+      { name: "Pune" },
+      { name: "USA" },
+    ]
+    this.DefaultLocation = this.locations[1].name;
   }
 
-  IsJiraOn = true;
+  DefaultLocation;
+  IsJiraOn = [];
   containers = [];
-  ControlIndex = 1;
+  ControlIndex = 0;
   HoursArray = [];
   TotalHours;
   x;
+  ProjectArray = [];
+  ModuleArray = [];
+  ObjectArray = [];
+  ActivityArray = [];
+  JIRANumberArray = [];
+  CommentsArray = [];
+  HrsWorkedArray = [];
+  ObjectCollection = [];
+  item = {};
   // selectedProject;
+  locations = []
+
+
 
   projects = [
     { name: "--Select--" },
-    { name: "Undeployed-" },
+    { name: "Undeployed" },
   ]
 
   modules = [
@@ -72,9 +96,11 @@ export class FilldetailComponent implements OnInit {
   ]
 
 
-  projectClick(event) {
-    if (event.target.value == 'Undeployed-') {
-      this.IsJiraOn = false;
+  projectClick(event, index) {
+    this.ProjectArray[index] = event.value;
+
+    if (event.value == 'Undeployed') {
+      this.IsJiraOn[index] = false;
       this.modules = [
         { name: '--Select--' },
         { name: 'Appraisal' },
@@ -85,34 +111,38 @@ export class FilldetailComponent implements OnInit {
         { name: 'Support' },
       ]
     }
-    if (event.target.value == '--Select--') {
-      this.IsJiraOn = true;
+    if (event.value == '--Select--') {
+      this.IsJiraOn[index] = true;
       this.modules = [
+        { name: "--Select--" }
+      ]
+      this.objects = [
         { name: "--Select--" }
       ]
     }
   }
 
-  moduleClick(event) {
+  moduleClick(event, index) {
+    this.ModuleArray[index] = event.value;
 
-    if (event.target.value == '--Select--') {
+    if (event.value == '--Select--') {
       this.objects = [
         { name: "--Select--" }
       ]
     }
-    else if (event.target.value == 'Appraisal' || event.target.value == 'KT') {
+    else if (event.value == 'Appraisal' || event.value == 'KT') {
       this.objects = [
         { name: "--Select--" },
         { name: "Meeting" }
       ]
     }
-    else if (event.target.value == 'NPA') {
+    else if (event.value == 'NPA') {
       this.objects = [
         { name: "--Select--" },
         { name: "Documentation" }
       ]
     }
-    else if (event.target.value == 'Organisational') {
+    else if (event.value == 'Organisational') {
       this.objects = [
         { name: "--Select--" },
         { name: "Holiday" },
@@ -125,14 +155,14 @@ export class FilldetailComponent implements OnInit {
         { name: "Training (As Trainer)" }
       ]
     }
-    else if (event.target.value == 'Self Assigned') {
+    else if (event.value == 'Self Assigned') {
       this.objects = [
         { name: "--Select--" },
         { name: "Doing R&D" },
         { name: "Leave" }
       ]
     }
-    else if (event.target.value == 'Support') {
+    else if (event.value == 'Support') {
       this.objects = [
         { name: "--Select--" },
         { name: "Support Activity" },
@@ -140,14 +170,28 @@ export class FilldetailComponent implements OnInit {
     }
   }
 
+  objectClick(event, index) {
+    this.ObjectArray[index] = event.value;
+  }
+
+  activityClick(event, index) {
+    this.ActivityArray[index] = event.value;
+  }
+
   addNewTask() {
-    this.containers[this.ControlIndex] = true;
     this.ControlIndex++;
+    this.containers[this.ControlIndex] = true;
+    this.IsJiraOn[this.ControlIndex] = true;
   }
 
 
   closeTask(event) {
-    this.containers[event] = false;
+    if (event == 0) {
+      return false;
+    }
+    else {
+      this.containers[event] = false;
+    }
     delete this.TotalHours;
   }
 
@@ -158,15 +202,49 @@ export class FilldetailComponent implements OnInit {
   }
 
 
-  hoursClick(event) {
-    this.x = event.data;
+  hoursClick(event, index) {
+    this.HoursArray[index] = event.data;
+    
+/*     var result = 0;
+    for (var i = 0; i < this.HoursArray.length; i++) {
+      result += this.HoursArray[i];
+    }
+    console.log(result); */
+    
+  
     this.TotalHours = event.data;
   }
 
   saveClick() {
-
+    this.ObjectCollection = [];
+    for (let i: number = 0; i < this.containers.length; i++) {
+      this.item = {}
+      if (this.ProjectArray[i] != '--Select--' && this.ProjectArray[i] != undefined && this.ModuleArray[i] != '--Select--' && this.ModuleArray[i] != undefined && this.ObjectArray[i] != '--Select--' && this.ObjectArray[i] != undefined && this.ActivityArray[i] != '--Select--' && this.ActivityArray[i] != undefined && this.CommentsArray[i] != undefined && this.HrsWorkedArray[i] != undefined) {
+        this.item["SeqNumber"] = i;
+        this.item["Project"] = this.ProjectArray[i];
+        this.item["Module"] = this.ModuleArray[i];
+        this.item["Object"] = this.ObjectArray[i];
+        this.item["Activity"] = this.ActivityArray[i];
+        if (this.JIRANumberArray[i] != undefined) {
+          this.item["JIRAno"] = this.JIRANumberArray[i];
+        }
+        this.item["Comments"] = this.CommentsArray[i];
+        this.item["HrsWorked"] = this.HrsWorkedArray[i];
+        this.ObjectCollection[i] = this.item;
+      }
+      else {
+        this.openSnackBar('Please Fill All The Values ', '');
+      }
+    }
+    console.log(this.ObjectCollection);
   }
 
+
+  openSnackBar(message: string, action: string) {
+    this.snackBar.open(message, action, {
+      duration: 2000,
+    });
+  }
 
 
   // clickOutside() {

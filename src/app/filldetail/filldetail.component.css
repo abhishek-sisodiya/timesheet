@@ -1,0 +1,35 @@
+table,mat-form-field,input,textarea {
+    table-layout: fixed;
+    width: 100%;   
+}
+
+/* th {
+    border-style: solid;
+    border-width: 5px;
+    border-color:grey;
+    word-wrap: break-word;
+} */
+
+
+
+ /* table tr td {
+    border-right: 2px solid black;
+    color: black
+  }
+  
+  table tr td:last-of-type {
+    border: none;
+  } */
+
+  .head{
+      background-color: lightgray;
+  }
+
+  td{
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+div{
+    border-style: outset;
+}
