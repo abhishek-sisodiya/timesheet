@@ -33,3 +33,26 @@ table,mat-form-field,input,textarea {
 div{
     border-style: outset;
 }
+
+.show {
+    background-color: white;
+ }
+ 
+ .hide {
+    border-style: solid;
+    border-color: red;
+ }
+
+ .addNewTask{
+     cursor: pointer;
+     color: gray;
+ }
+
+ .closeTask{
+    cursor: pointer;
+ }
+
+ .mat-button    {
+    background-color: lightgray;
+ }
+

@@ -5,16 +5,20 @@ import { AppComponent } from './app.component';
 import { FilldetailComponent } from './filldetail/filldetail.component';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import {MatSnackBarModule,MatSelectModule,MatCardModule,MatButtonModule, MatCheckboxModule, MatToolbarModule, MatSidenavModule, MatIconModule, MatListModule, MatTableModule, MatPaginatorModule, MatSortModule, MatInputModule} from '@angular/material';
+import {MatMenuModule,MatNativeDateModule ,MatDatepickerModule,MatSnackBarModule,MatSelectModule,MatCardModule,MatButtonModule, MatCheckboxModule, MatToolbarModule, MatSidenavModule, MatIconModule, MatListModule, MatTableModule, MatPaginatorModule, MatSortModule, MatInputModule} from '@angular/material';
 import { LayoutModule } from '@angular/cdk/layout';
+import { HeaderComponent } from './shared/header/header.component';
+import { FooterComponent } from './shared/footer/footer.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     FilldetailComponent,
+    HeaderComponent,
+    FooterComponent,
   ],
   imports: [
-    MatSnackBarModule,MatButtonModule,MatSelectModule, MatCheckboxModule, MatTableModule,MatInputModule,MatCardModule,
+    MatMenuModule,MatNativeDateModule ,MatDatepickerModule,MatSnackBarModule,MatButtonModule,MatSelectModule, MatCheckboxModule, MatTableModule,MatInputModule,MatCardModule,
     FormsModule,
     BrowserModule,
     RouterModule.forRoot(

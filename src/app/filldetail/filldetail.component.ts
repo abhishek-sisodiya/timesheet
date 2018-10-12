@@ -1,8 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { _localeFactory } from '@angular/core/src/application_module';
 import { MatSnackBar } from '@angular/material';
-import { ifError } from 'assert';
-import { del } from 'selenium-webdriver/http';
 
 @Component({
   selector: 'app-filldetail',
@@ -16,6 +14,12 @@ export class FilldetailComponent implements OnInit {
   ngOnInit() {
     this.containers[this.ControlIndex] = true;
     this.IsJiraOn[this.ControlIndex] = true;
+    this.ProjectClass[this.ControlIndex] = true;
+    this.ModuleClass[this.ControlIndex] = true;
+    this.ObjectClass[this.ControlIndex] = true;
+    this.ActivityClass[this.ControlIndex] = true;
+    this.HrsClass[this.ControlIndex] = true;
+    this.TextAreaClass[this.ControlIndex] = true;
 
     this.locations = [
       { name: "Bangalore" },
@@ -44,9 +48,13 @@ export class FilldetailComponent implements OnInit {
   ObjectCollection = [];
   item = {};
   // selectedProject;
-  locations = []
-
-
+  locations = [];
+  ProjectClass = [];
+  ModuleClass = [];
+  ObjectClass = [];
+  ActivityClass = [];
+  HrsClass = [];
+  TextAreaClass = [];
 
   projects = [
     { name: "--Select--" },
@@ -98,6 +106,9 @@ export class FilldetailComponent implements OnInit {
 
   projectClick(event, index) {
     this.ProjectArray[index] = event.value;
+    if (event.value != '--Select--') {
+      this.ProjectClass[index] = true;
+    }
 
     if (event.value == 'Undeployed') {
       this.IsJiraOn[index] = false;
@@ -124,6 +135,9 @@ export class FilldetailComponent implements OnInit {
 
   moduleClick(event, index) {
     this.ModuleArray[index] = event.value;
+    if (event.value != '--Select--') {
+      this.ModuleClass[index] = true;
+    }
 
     if (event.value == '--Select--') {
       this.objects = [
@@ -172,54 +186,148 @@ export class FilldetailComponent implements OnInit {
 
   objectClick(event, index) {
     this.ObjectArray[index] = event.value;
+    if (event.value != '--Select--') {
+      this.ObjectClass[index] = true;
+    }
   }
 
   activityClick(event, index) {
     this.ActivityArray[index] = event.value;
+    if (event.value != '--Select--') {
+      this.ActivityClass[index] = true;
+    }
   }
 
   addNewTask() {
     this.ControlIndex++;
     this.containers[this.ControlIndex] = true;
     this.IsJiraOn[this.ControlIndex] = true;
+    this.ProjectClass[this.ControlIndex] = true;
+    this.ModuleClass[this.ControlIndex] = true;
+    this.ObjectClass[this.ControlIndex] = true;
+    this.ActivityClass[this.ControlIndex] = true;
+    this.HrsClass[this.ControlIndex] = true;
+    this.TextAreaClass[this.ControlIndex] = true;
   }
 
 
   closeTask(event) {
-    if (event == 0) {
-      return false;
+    let x = 0;
+    for (let i = 0; i < this.containers.length; i++) {
+      if (this.containers[i] == true) {
+        x++;
+      }
     }
-    else {
+    if (x > 1) {
       this.containers[event] = false;
     }
+    else {
+      return false;
+    }
+
+
+    /*     if (event == 0) {
+          return false;
+        }
+        else {
+          this.containers[event] = false;
+        } */
     delete this.TotalHours;
   }
 
 
   cancelClick() {
-    this.containers = [];
-    delete this.TotalHours;
+    // this.containers = [];
+    // delete this.TotalHours;
+    alert('Location.back()');
   }
 
 
   hoursClick(event, index) {
-    this.HoursArray[index] = event.data;
-    
-/*     var result = 0;
-    for (var i = 0; i < this.HoursArray.length; i++) {
-      result += this.HoursArray[i];
+    if (this.HrsWorkedArray[index] != undefined || this.HrsWorkedArray[index] != '') {
+      this.HrsClass[index] = true;
     }
-    console.log(result); */
-    
-  
+
+
+
+    this.HoursArray[index] = event.data;
+
+    /*     var result = 0;
+        for (var i = 0; i < this.HoursArray.length; i++) {
+          result += this.HoursArray[i];
+        }
+        console.log(result); */
+
+
     this.TotalHours = event.data;
   }
 
+  commentClick(index) {
+    if (this.CommentsArray[index] != undefined || this.CommentsArray[index] != '' || this.CommentsArray.length != 0) {
+      this.TextAreaClass[index] = true;
+    }
+  }
+
   saveClick() {
+    let count = 0;
     this.ObjectCollection = [];
+
     for (let i: number = 0; i < this.containers.length; i++) {
-      this.item = {}
-      if (this.ProjectArray[i] != '--Select--' && this.ProjectArray[i] != undefined && this.ModuleArray[i] != '--Select--' && this.ModuleArray[i] != undefined && this.ObjectArray[i] != '--Select--' && this.ObjectArray[i] != undefined && this.ActivityArray[i] != '--Select--' && this.ActivityArray[i] != undefined && this.CommentsArray[i] != undefined && this.HrsWorkedArray[i] != undefined) {
+      if (this.containers[i] == true) {
+
+        if (this.HrsWorkedArray[i] == undefined || this.HrsWorkedArray[i] == '') {
+          this.HrsClass[i] = false;
+          count++;
+        }
+        else {
+          this.HrsClass[i] = true;
+        }
+
+        if (this.CommentsArray[i] == undefined || this.CommentsArray[i] == '' || this.CommentsArray.length == 0) {
+          this.TextAreaClass[i] = false;
+          count++;
+        }
+        else {
+          this.TextAreaClass[i] = true;
+        }
+
+        if (this.ProjectArray.length == 0 || this.ProjectArray[i] == '--Select--' || this.ProjectArray[i] == '' || this.ProjectArray[i] == undefined) {
+          this.ProjectClass[i] = false;
+          count++;
+        }
+        else {
+          this.ProjectClass[i] = true;
+        }
+
+        if (this.ModuleArray.length == 0 || this.ModuleArray[i] == '--Select--' || this.ModuleArray[i] == '' || this.ModuleArray[i] == undefined) {
+          this.ModuleClass[i] = false;
+          count++;
+        }
+        else {
+          this.ModuleClass[i] = true;
+        }
+
+        if (this.ObjectArray.length == 0 || this.ObjectArray[i] == '--Select--' || this.ObjectArray[i] == '' || this.ObjectArray[i] == undefined) {
+          this.ObjectClass[i] = false;
+          count++;
+        }
+        else {
+          this.ObjectClass[i] = true;
+        }
+
+        if (this.ActivityArray.length == 0 || this.ActivityArray[i] == '--Select--' || this.ActivityArray[i] == '' || this.ActivityArray[i] == undefined) {
+          this.ActivityClass[i] = false;
+          count++;
+        }
+        else {
+          this.ActivityClass[i] = true;
+        }
+      }
+    }
+
+    if (count == 0) {
+      for (let i: number = 0; i < this.containers.length; i++) {
+        this.item = {}
         this.item["SeqNumber"] = i;
         this.item["Project"] = this.ProjectArray[i];
         this.item["Module"] = this.ModuleArray[i];
@@ -231,10 +339,11 @@ export class FilldetailComponent implements OnInit {
         this.item["Comments"] = this.CommentsArray[i];
         this.item["HrsWorked"] = this.HrsWorkedArray[i];
         this.ObjectCollection[i] = this.item;
+        this.openSnackBar('Timesheet Successfully Submitted ', '');
       }
-      else {
-        this.openSnackBar('Please Fill All The Values ', '');
-      }
+    }
+    else {
+      this.openSnackBar('Please Fill Values -->', 'For Red Areas');
     }
     console.log(this.ObjectCollection);
   }
@@ -242,10 +351,16 @@ export class FilldetailComponent implements OnInit {
 
   openSnackBar(message: string, action: string) {
     this.snackBar.open(message, action, {
-      duration: 2000,
+      duration: 3000,
     });
   }
 
+
+  dateClick(){
+    // this.containers = [];
+    // this.ControlIndex = 0;
+    location.reload();
+  }
 
   // clickOutside() {
   //   if(this.x != undefined){

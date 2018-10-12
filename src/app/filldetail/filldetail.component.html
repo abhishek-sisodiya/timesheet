@@ -1,34 +1,54 @@
 <div>
-  <div class="head">
-    <table>
-      <tr>
-        <td>
-          TimeSheet : DATE HERE!
-        </td>
-        <td>
-          <mat-form-field>
-            <mat-select placeholder="Location" [(ngModel)]="DefaultLocation">
-              <mat-option *ngFor="let location of locations" [value]="location.name">{{location.name}} </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </td>
-        <td>
-          IRA : IRA NAME HERE!
-        </td>
-        <td>
-          <button mat-button color="primary" (click)='addNewTask()'>Add New Task</button>
-        </td>
-      </tr>
-    </table>
+  TimeSheet
+</div>
+<div>
+  Total Timesheet For Selected Month :
+</div>
+
+<div>
+
+  <div style="width:20%; display: inline-block" (click)="dateClick()">
+    DATE HERE!<br>
+    <mat-calendar [selected]="selectedDate" (selectedChange)="selectedDate = $event">
+    </mat-calendar>
   </div>
-  
-  <div>
-    <table>
+
+  <div style="float: right; width: 78%;">
+    <div class="head">
+      <table>
+        <tr>
+          <td>
+            TimeSheet : DATE HERE!
+          </td>
+          <td>
+            <mat-form-field>
+              <mat-select placeholder="Location" [(ngModel)]="DefaultLocation">
+                <mat-option *ngFor="let location of locations" [value]="location.name">{{location.name}} </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </td>
+          <td>
+            IRA : IRA NAME HERE!
+          </td>
+          <td>
+            <button style="float:right" class="addNewTask" (click)='addNewTask()'>
+              <mat-icon>add</mat-icon>
+              <span>Add New Task</span>
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+
+    <div>
+      <!-- <table>
       <tbody>
         <tr>
-          <th>Project</th>
-          <!-- <th style="align-content: left;">Project</th> -->
-          <th>Module</th>
+          <th>Project</th> -->
+
+      <!-- <th style="align-content: left;">Project</th> -->
+
+      <!-- <th>Module</th>
           <th>Object</th>
           <th>Activity</th>
           <th>JIRA Number</th>
@@ -37,17 +57,20 @@
           <th></th>
         </tr>
       </tbody>
-    </table>
+    </table> -->
 
 
 
-        <div *ngFor="let container of containers; let i=index" [id]="i">
+      <ng-container *ngFor="let container of containers; let i=index">
+        <div *ngIf=" containers[i]" [id]="i">
+          i:{{i}}
           <table>
             <tbody>
-              <tr *ngIf=" container == true ">
+              <tr>
                 <td>
                   <mat-form-field>
-                    <mat-select placeholder="--Select--" (selectionChange)="projectClick($event,i)">
+                    <mat-select [(ngModel)]="ProjectArray[i]" [ngClass]="{show: ProjectClass[i], hide: !ProjectClass[i]}"
+                      placeholder="Project" (selectionChange)="projectClick($event,i)">
                       <mat-option *ngFor="let project of projects" [value]="project.name">
                         {{project.name}}
                       </mat-option>
@@ -58,7 +81,8 @@
 
                 <td>
                   <mat-form-field>
-                    <mat-select placeholder="--Select--" (selectionChange)="moduleClick($event,i)">
+                    <mat-select [(ngModel)]="ModuleArray[i]" [ngClass]="{show: ModuleClass[i], hide: !ModuleClass[i]}"
+                      placeholder="Module" (selectionChange)="moduleClick($event,i)">
                       <mat-option *ngFor="let module of modules" [value]="module.name">
                         {{module.name}}
                       </mat-option>
@@ -68,7 +92,8 @@
 
                 <td>
                   <mat-form-field>
-                    <mat-select (selectionChange)="objectClick($event,i)" placeholder="--Select--">
+                    <mat-select [(ngModel)]="ObjectArray[i]" [ngClass]="{show: ObjectClass[i], hide: !ObjectClass[i]}"
+                      (selectionChange)="objectClick($event,i)" placeholder="Object">
                       <mat-option *ngFor="let object of objects" [value]="object.name">
                         {{object.name}}
                       </mat-option>
@@ -78,7 +103,8 @@
 
                 <td>
                   <mat-form-field>
-                    <mat-select (selectionChange)="activityClick($event,i)" placeholder="--Select--">
+                    <mat-select [(ngModel)]="ActivityArray[i]" [ngClass]="{show: ActivityClass[i], hide: !ActivityClass[i]}"
+                      (selectionChange)="activityClick($event,i)" placeholder="Activity">
                       <mat-option *ngFor="let activity of activitys" [value]="activity.name">
                         {{activity.name}}
                       </mat-option>
@@ -87,41 +113,45 @@
                 </td>
 
                 <td>
-                  <input style="width:90%" [(ngModel)]="JIRANumberArray[i]" *ngIf="IsJiraOn[i] == true">
-                  <input style="width:90%" [(ngModel)]="JIRANumberArray[i]" *ngIf="IsJiraOn[i] == false" disabled>
-                </td>
-
-                <td>
-                  <textarea style="width:90%" [(ngModel)]="CommentsArray[i]"></textarea>
+                  <input placeholder="JIRA Number" style="width:90%" [(ngModel)]="JIRANumberArray[i]" *ngIf="IsJiraOn[i] == true">
+                  <input placeholder="JIRA Number" style="width:90%" [(ngModel)]="JIRANumberArray[i]" *ngIf="IsJiraOn[i] == false"
+                    disabled>
                 </td>
 
                 <td>
                   <mat-form-field class="example-full-width">
-                    <input matInput [(ngModel)]="HrsWorkedArray[i]" (input)="hoursClick($event,i)">
+                    <textarea placeholder="Comments" matInput [ngClass]="{show: TextAreaClass[i], hide: !TextAreaClass[i]}"
+                      style="width:90%" [(ngModel)]="CommentsArray[i]" (input)="commentClick(i)"></textarea>
                   </mat-form-field>
                 </td>
 
                 <td>
-                  <button mat-button color="primary" (click)="closeTask(i)">CancelTask</button>
+                  <mat-form-field class="example-full-width">
+                    <input placeholder="Hrs Worked" [ngClass]="{show: HrsClass[i], hide: !HrsClass[i]}" matInput
+                      [(ngModel)]="HrsWorkedArray[i]" (input)="hoursClick($event,i)">
+                  </mat-form-field>
+                </td>
+
+                <td>
+                  <mat-icon class="closeTask" (click)="closeTask(i)">clear</mat-icon>
                 </td>
 
               </tr>
             </tbody>
           </table>
         </div>
+      </ng-container>
+    </div>
 
+    <div style="float:right">
+      <!-- hrs Worked -->
+      Total Hrs: {{TotalHours}}
+      <!-- Save -->
+
+      <button mat-button color="primary" (click)="saveClick()">Save</button>&nbsp;
+      <button mat-button color="primary">Submit</button>&nbsp;
+      <button mat-button color="primary" (click)="cancelClick()">Cancel</button>
+
+    </div>
   </div>
-
-  <div style="float:right">
-    <!-- hrs Worked -->
-    Total Hrs: {{TotalHours}}
-    <!-- Save -->
-
-    <button mat-button color="primary" (click)="saveClick()">Save</button>
-    <button mat-button color="primary">Submit</button>
-    <button mat-button color="primary" (click)="cancelClick()">Cancel</button>
-
-  </div>
-
-
 </div>
